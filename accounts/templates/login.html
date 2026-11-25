@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --cream: #faf7f2;
+    --charcoal: #1c1c1e;
+    --warm-gray: #6b6560;
+    --gold: #c9a96e;
+    --gold-light: #e8d5b0;
+    --border: #e8e2d9;
+    --error: #b85c38;
+    --success: #4a7c59;
+    --radius: 3px;
+  }
+
+  .auth-wrapper {
+    min-height: calc(100vh - 130px);
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Decorative background geometry */
+  .auth-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 420px; height: 420px;
+    border: 1px solid rgba(201,169,110,0.12);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .auth-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -80px;
+    width: 280px; height: 280px;
+    border: 1px solid rgba(201,169,110,0.1);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .auth-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 460px;
+    padding: 3rem 3rem 2.5rem;
+    position: relative;
+    box-shadow: 0 8px 48px rgba(28,28,30,0.07);
+    animation: slideUp 0.4s ease both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Gold top accent line */
+  .auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 2.5rem; right: 2.5rem;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    border-radius: 0 0 2px 2px;
+  }
+
+  /* Header */
+  .auth-header { text-align: center; margin-bottom: 2.2rem; }
+
+  .auth-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+  }
+  .auth-logo span { color: var(--gold); font-style: italic; }
+
+  .auth-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.85rem;
+    font-weight: 300;
+    color: var(--charcoal);
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
+  }
+
+  .auth-subtitle {
+    font-size: 0.8rem;
+    color: var(--warm-gray);
+    letter-spacing: 0.04em;
+  }
+
+  /* Divider */
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.8rem 0;
+    color: var(--border);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #c8c0b8;
+  }
+  .auth-divider::before, .auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Messages */
+  .messages-list { margin-bottom: 1.4rem; }
+
+  .msg-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    animation: fadeIn 0.25s ease;
+  }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  .msg-error {
+    background: #fdf3ef;
+    border: 1px solid #f0c4b4;
+    color: var(--error);
+  }
+  .msg-success {
+    background: #eef5f1;
+    border: 1px solid #b8d9c5;
+    color: var(--success);
+  }
+  .msg-item i { margin-top: 1px; font-size: 0.75rem; flex-shrink: 0; }
+
+  /* Form */
+  .form-group { margin-bottom: 1.2rem; }
+
+  .form-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+    margin-bottom: 0.45rem;
+    display: block;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-wrap .input-icon {
+    position: absolute;
+    left: 0.9rem;
+    color: #c0b8b0;
+    font-size: 0.8rem;
+    pointer-events: none;
+    transition: color 0.2s;
+  }
+
+  .form-control {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.7rem 0.9rem 0.7rem 2.4rem;
+    font-size: 0.85rem;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--charcoal);
+    background: var(--cream);
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .form-control:focus {
+    border-color: var(--gold);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(201,169,110,0.1);
+  }
+
+  .form-control:focus + .input-icon,
+  .input-wrap:focus-within .input-icon { color: var(--gold); }
+
+  .form-control::placeholder { color: #c0b8b0; }
+
+  /* Password toggle */
+  .toggle-pass {
+    position: absolute;
+    right: 0.9rem;
+    background: none;
+    border: none;
+    color: #c0b8b0;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+  }
+  .toggle-pass:hover { color: var(--gold); }
+
+  /* Remember + forgot */
+  .form-check-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.6rem;
+  }
+
+  .form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+  }
+
+  .form-check input[type="checkbox"] {
+    width: 14px; height: 14px;
+    accent-color: var(--gold);
+    cursor: pointer;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+
+  .form-check label {
+    font-size: 0.78rem;
+    color: var(--warm-gray);
+    cursor: pointer;
+  }
+
+  .forgot-link {
+    font-size: 0.76rem;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+  .forgot-link:hover { color: var(--charcoal); }
+
+  /* Submit button */
+  .btn-auth {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: var(--charcoal);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-bottom: 1.5rem;
+  }
+  .btn-auth:hover { background: var(--gold); color: var(--charcoal); }
+
+  /* Footer link */
+  .auth-footer-text {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--warm-gray);
+  }
+  .auth-footer-text a {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .auth-footer-text a:hover { color: var(--charcoal); }
+
+  /* Hidden next input */
+  input[name="next"] { display: none; }
+</style>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <div class="auth-header">
+      <a href="/" class="auth-logo"><span>E</span>-Shopper</a>
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">Sign in to your account to continue</p>
+    </div>
+
+    <!-- Django messages -->
+    {% if messages %}
+    <div class="messages-list">
+      {% for message in messages %}
+      <div class="msg-item {% if message.tags == 'error' %}msg-error{% else %}msg-success{% endif %}">
+        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'log_in' %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+
+      <!-- Username -->
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <div class="input-wrap">
+          <input class="form-control" type="text" id="username" name="username"
+            placeholder="Enter your username" required autocomplete="username">
+          <i class="fas fa-user input-icon" style="order:2;position:absolute;left:0.9rem;"></i>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-wrap">
+          <input class="form-control" type="password" id="password" name="password"
+            placeholder="Enter your password" required autocomplete="current-password">
+          <i class="fas fa-lock input-icon"></i>
+          <button class="toggle-pass" type="button" onclick="togglePass('password', this)">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Remember me + Forgot -->
+      <div class="form-check-row">
+        <div class="form-check">
+          <input type="checkbox" id="remember_me" name="remember_me">
+          <label for="remember_me">Remember me</label>
+        </div>
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn-auth">Sign In</button>
+    </form>
+
+    <p class="auth-footer-text">
+      Don't have an account? <a href="{% url 'register' %}">Create one</a>
+    </p>
+
+  </div>
+</div>
+
+<script>
+  function togglePass(fieldId, btn) {
+    const field = document.getElementById(fieldId);
+    const icon = btn.querySelector('i');
+    if (field.type === 'password') {
+      field.type = 'text';
+      icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+      field.type = 'password';
+      icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+  }
+</script>
+
+{% endblock content %}

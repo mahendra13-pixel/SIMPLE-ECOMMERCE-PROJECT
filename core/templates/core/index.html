@@ -1,0 +1,810 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Raleway:wght@200;300;400;500;600;700;800&display=swap');
+
+  :root {
+    --white:    #ffffff;
+    --bg:       #fafaf8;
+    --bg2:      #f5f2ee;
+    --terra:    #c8521a;
+    --terra-lt: #e06830;
+    --terra-dk: #a84015;
+    --terra-bg: #fdf5ef;
+    --terra-bd: rgba(200,82,26,.18);
+    --ink:      #1a1612;
+    --mid:      #5c5550;
+    --soft:     #9c9690;
+    --line:     #ede8e2;
+    --line2:    #e0d9d2;
+    --r:        2px;
+    --t:        .2s ease;
+  }
+
+  body { background: var(--bg); font-family: 'Raleway', sans-serif; }
+
+  /* ── ANNOUNCEMENT ── */
+  .ann {
+    background: var(--terra);
+    text-align: center;
+    padding: .46rem 1rem;
+    font-family: 'Raleway', sans-serif;
+    font-size: .68rem;
+    font-weight: 600;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+
+  /* ── HERO ── */
+  #slider {
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+    min-height: 540px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  #slider::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--terra);
+    z-index: 2;
+  }
+  #slider .container { position: relative; z-index: 1; }
+
+  /* indicators */
+  #slider-carousel .carousel-indicators { bottom: 28px; gap: 6px; }
+  #slider-carousel .carousel-indicators button {
+    width: 20px; height: 1px;
+    border-radius: 0;
+    background: rgba(255,255,255,.2);
+    border: none; padding: 0;
+    transition: background var(--t), width var(--t);
+  }
+  #slider-carousel .carousel-indicators button.active { background: var(--terra); width: 40px; }
+
+  .carousel-item .row { min-height: 540px; align-items: center; padding: 64px 0 88px; }
+
+  /* eyebrow */
+  .h-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Raleway', sans-serif;
+    font-size: .62rem;
+    font-weight: 600;
+    letter-spacing: .32em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 1.5rem;
+  }
+  .h-eyebrow::before, .h-eyebrow::after {
+    content: '';
+    display: block;
+    width: 28px; height: 1px;
+    background: var(--terra);
+    opacity: .5;
+  }
+
+  /* headline — Cormorant shines here */
+  .carousel-item h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 6vw, 5.8rem);
+    font-weight: 600;
+    line-height: .92;
+    letter-spacing: -.01em;
+    color: var(--white);
+    margin-bottom: 1.1rem;
+  }
+  .carousel-item h1 em {
+    display: block;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--terra);
+    letter-spacing: .04em;
+  }
+
+  .carousel-item h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.1rem, 2.2vw, 1.55rem);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(255,255,255,.42);
+    margin-bottom: 1rem;
+    letter-spacing: .04em;
+  }
+
+  .carousel-item p {
+    font-family: 'Raleway', sans-serif;
+    font-size: .84rem;
+    font-weight: 300;
+    color: rgba(255,255,255,.35);
+    line-height: 1.9;
+    max-width: 360px;
+    margin-bottom: .5rem;
+  }
+  .carousel-item p:last-of-type {
+    font-family: 'Raleway', sans-serif;
+    color: rgba(255,255,255,.68);
+    font-weight: 600;
+    font-size: .86rem;
+    letter-spacing: .08em;
+    margin-bottom: 2.4rem;
+  }
+
+  /* CTA */
+  .btn.get {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--terra);
+    border: 1px solid var(--terra);
+    color: var(--white);
+    padding: .82rem 2.4rem;
+    border-radius: 0;
+    font-family: 'Raleway', sans-serif;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    transition: background var(--t), border-color var(--t);
+  }
+  .btn.get:hover { background: var(--terra-lt); border-color: var(--terra-lt); color: var(--white); }
+  .btn.get .ic { font-size: .9rem; }
+
+  /* hero image */
+  .h-img-wrap { position: relative; display: inline-block; }
+  .h-img-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: -12px; right: -12px;
+    width: 100%; height: 100%;
+    border: 1px solid var(--terra);
+    opacity: .3;
+    pointer-events: none;
+  }
+  .carousel-item img.girl {
+    display: block;
+    object-fit: cover;
+    border-radius: 0;
+    filter: brightness(.94) contrast(1.04);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── MAIN ── */
+  section.main-section { background: var(--bg); padding: 4.5rem 0; }
+
+  /* ── SIDEBAR ── */
+  .shop-sidebar { position: sticky; top: 1.5rem; }
+
+  .widget {
+    background: var(--white);
+    border: 1px solid var(--line);
+    padding: 1.4rem 1.3rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .widget-title {
+    font-family: 'Raleway', sans-serif;
+    font-size: .64rem;
+    font-weight: 700;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+    padding-bottom: .7rem;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .widget-title::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0;
+    width: 24px; height: 1px;
+    background: var(--terra);
+  }
+
+  .accordion-item { border: none !important; margin-bottom: 3px; }
+  .accordion-button {
+    font-family: 'Raleway', sans-serif;
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .06em;
+    color: var(--ink) !important;
+    background: var(--bg2) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: 0 !important;
+    padding: .58rem .9rem;
+    transition: all var(--t);
+  }
+  .accordion-button::after { display: none; }
+  .accordion-button:not(.collapsed) {
+    background: var(--ink) !important;
+    color: var(--white) !important;
+    border-color: var(--ink) !important;
+  }
+  .accordion-button .badge {
+    font-size: .62rem;
+    background: var(--line) !important;
+    color: var(--soft) !important;
+    border-radius: 0;
+    padding: 2px 7px;
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+  }
+  .accordion-button:not(.collapsed) .badge {
+    background: rgba(255,255,255,.12) !important;
+    color: rgba(255,255,255,.5) !important;
+  }
+  .accordion-body { padding: .45rem 0 0; }
+  .accordion-body ul li a {
+    display: flex;
+    align-items: center;
+    padding: .38rem .8rem;
+    font-family: 'Raleway', sans-serif;
+    font-size: .78rem;
+    font-weight: 400;
+    color: var(--mid);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all var(--t);
+    gap: 6px;
+  }
+  .accordion-body ul li a:hover {
+    color: var(--terra);
+    background: var(--terra-bg) !important;
+    border-left-color: var(--terra);
+    padding-left: 1.1rem !important;
+  }
+
+  .form-control {
+    border: 1px solid var(--line);
+    border-radius: 0;
+    font-size: .8rem;
+    color: var(--ink);
+    background: var(--bg2);
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400;
+    padding: .55rem .8rem;
+    transition: border-color var(--t), background var(--t);
+  }
+  .form-control::placeholder { color: var(--soft); }
+  .form-control:focus { background: var(--white); border-color: var(--terra); box-shadow: none; outline: none; }
+  label { color: var(--soft) !important; font-size: .76rem; font-family: 'Raleway', sans-serif; }
+
+  .btn-primary {
+    background: var(--ink);
+    border: none;
+    border-radius: 0;
+    font-family: 'Raleway', sans-serif;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    padding: .68rem 1.2rem;
+    transition: background var(--t);
+  }
+  .btn-primary:hover { background: var(--terra); }
+
+  .form-check-input:checked { background-color: var(--terra); border-color: var(--terra); border-radius: 0; }
+  .form-check-label { font-size: .8rem; font-family: 'Raleway', sans-serif; font-weight: 400; color: var(--mid); }
+
+  /* ── SECTION TITLES ── */
+  .sec-head { text-align: center; margin-bottom: 2.8rem; }
+  .sec-head .ey {
+    display: block;
+    font-family: 'Raleway', sans-serif;
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: .36em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: .7rem;
+  }
+
+  /* Cormorant shines for big titles */
+  .features_items h2.title,
+  .recommended_items h2.title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 3.8vw, 3.2rem);
+    font-weight: 500;
+    letter-spacing: .02em;
+    color: var(--ink);
+    margin-bottom: 0;
+    display: inline-block;
+    position: relative;
+    line-height: 1.1;
+  }
+  .features_items h2.title::after,
+  .recommended_items h2.title::after {
+    content: '';
+    display: block;
+    width: 32px; height: 1px;
+    background: var(--terra);
+    margin: .6rem auto 0;
+  }
+
+  /* ── PRODUCT CARDS ── */
+  .card {
+    border: 1px solid var(--line) !important;
+    border-radius: 0 !important;
+    background: var(--white);
+    transition: border-color var(--t), box-shadow var(--t);
+    overflow: hidden;
+    position: relative;
+  }
+  .card:hover {
+    border-color: var(--terra-bd) !important;
+    box-shadow: 0 8px 32px rgba(26,22,18,.07) !important;
+  }
+
+  .card-img-wrapper { overflow: hidden; position: relative; background: var(--bg2); }
+  .card-img-top {
+    height: 260px; width: 100%;
+    object-fit: cover; display: block;
+    transition: transform .4s ease, filter .4s ease;
+    filter: brightness(.96);
+  }
+  .card:hover .card-img-top { transform: scale(1.04); filter: brightness(1); }
+
+  /* wishlist */
+  .wish-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 32px; height: 32px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity var(--t);
+    z-index: 3; cursor: pointer; border-radius: 0;
+  }
+  .card:hover .wish-btn { opacity: 1; }
+  .wish-btn .fa-heart { font-size: .78rem; color: var(--soft); transition: color var(--t); }
+  .wish-btn:hover .fa-heart { color: var(--terra); }
+
+  /* overlay */
+  .card-ov {
+    position: absolute; inset: 0;
+    background: rgba(26,22,18,.52);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity var(--t);
+  }
+  .card:hover .card-ov { opacity: 1; }
+  .card-ov span {
+    font-family: 'Raleway', sans-serif;
+    font-size: .66rem;
+    font-weight: 600;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,.45);
+    padding: .36rem 1.1rem;
+  }
+
+  /* label */
+  .label-top {
+    position: absolute; top: 0; left: 0;
+    background: var(--terra);
+    padding: 4px 11px;
+    font-family: 'Raleway', sans-serif;
+    font-size: .6rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    z-index: 2; color: var(--white);
+  }
+  .label-top a { font-size: .6rem; font-weight: 600; color: var(--white); text-decoration: none; }
+
+  .card-body { padding: 1.1rem 1.2rem 1.2rem; }
+
+  .badge.bg-secondary {
+    background: var(--bg2) !important; color: var(--soft) !important;
+    font-weight: 400; font-size: .72rem; padding: 3px 9px;
+    border-radius: 0; font-family: 'Raleway', sans-serif;
+    border: 1px solid var(--line);
+  }
+  .badge.bg-success {
+    background: var(--ink) !important; color: var(--white) !important;
+    font-weight: 600; font-size: .72rem; padding: 3px 9px;
+    border-radius: 0; font-family: 'Raleway', sans-serif;
+  }
+
+  /* card title — Cormorant for product names */
+  .card-title a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--mid);
+    line-height: 1.5;
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color var(--t);
+  }
+  .card-title a:hover { color: var(--ink); }
+
+  .aff-link {
+    font-size: .64rem !important; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--line2) !important;
+    text-decoration: none; font-family: 'Raleway', sans-serif; font-weight: 500;
+  }
+
+  .btn-warning.bold-btn {
+    display: block;
+    background: transparent;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    border-radius: 0;
+    font-family: 'Raleway', sans-serif;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    padding: .62rem 1rem;
+    transition: background var(--t), color var(--t), border-color var(--t);
+    text-decoration: none; text-align: center;
+  }
+  .btn-warning.bold-btn:hover { background: var(--terra); border-color: var(--terra); color: var(--white); }
+
+  .fa-question-circle { color: var(--line2); font-size: .88rem; }
+  .clearfix .float-end .fa-heart { color: var(--line2); font-size: .88rem; cursor: pointer; transition: color var(--t); }
+  .clearfix .float-end .fa-heart:hover { color: var(--terra); }
+
+  /* ── PAGINATION ── */
+  .pagination { gap: 3px; flex-wrap: wrap; margin-top: 2.2rem; }
+  .page-link {
+    border: 1px solid var(--line2); color: var(--mid); border-radius: 0 !important;
+    font-family: 'Raleway', sans-serif; font-size: .76rem; font-weight: 600;
+    padding: .44rem .92rem; background: var(--white);
+    transition: all var(--t); letter-spacing: .06em;
+  }
+  .page-link:hover { background: var(--ink); border-color: var(--ink); color: var(--white); }
+  .page-link.bg-warning { background: var(--terra) !important; border-color: var(--terra) !important; color: var(--white) !important; }
+
+  /* ── CATEGORY TABS ── */
+  .category-tab { margin-top: 4rem; }
+  .nav-tabs {
+    border-bottom: 1px solid var(--line2); gap: 0;
+    flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tabs .nav-link {
+    border: none !important; border-bottom: 1px solid transparent !important;
+    margin-bottom: -1px; color: var(--soft);
+    font-family: 'Raleway', sans-serif; font-size: .7rem; font-weight: 600;
+    letter-spacing: .2em; text-transform: uppercase;
+    padding: .72rem 1.1rem; border-radius: 0 !important;
+    background: transparent !important; white-space: nowrap;
+    transition: color var(--t), border-color var(--t);
+  }
+  .nav-tabs .nav-link:hover { color: var(--mid); }
+  .nav-tabs .nav-link.active { color: var(--ink) !important; border-bottom-color: var(--terra) !important; font-weight: 700; }
+  .tab-content { padding: 2rem 0 0; }
+
+  .product-image-wrapper {
+    border: 1px solid var(--line); background: var(--white);
+    padding: 1.5rem 1.1rem 1.1rem;
+    transition: border-color var(--t), box-shadow var(--t);
+    text-align: center;
+  }
+  .product-image-wrapper:hover { border-color: var(--terra-bd); box-shadow: 0 6px 24px rgba(26,22,18,.06); }
+
+  /* Cormorant for product prices */
+  .productinfo h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 500;
+    color: var(--ink); margin: .8rem 0 .3rem;
+    letter-spacing: .02em;
+  }
+  .productinfo p { font-family: 'Raleway', sans-serif; font-size: .78rem; color: var(--soft); margin-bottom: .9rem; font-weight: 300; }
+
+  .btn-default.add-to-cart {
+    background: var(--ink); border: none; color: var(--white);
+    border-radius: 0; font-family: 'Raleway', sans-serif;
+    font-size: .68rem; font-weight: 700; letter-spacing: .16em;
+    text-transform: uppercase; padding: .52rem 1.1rem;
+    transition: background var(--t); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-default.add-to-cart:hover { background: var(--terra); color: var(--white); }
+
+  /* ── RECOMMENDED CAROUSEL ── */
+  .recommended_items { margin-top: 4.5rem; }
+  #recommended-item-carousel { position: relative; padding: 0 3.2rem; }
+  #recommended-item-carousel .carousel-control-prev,
+  #recommended-item-carousel .carousel-control-next {
+    width: 2.5rem; height: 2.5rem;
+    top: 50%; transform: translateY(-50%);
+    background: var(--white); border: 1px solid var(--line2);
+    border-radius: 0; color: var(--ink); opacity: 1;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--t);
+  }
+  #recommended-item-carousel .carousel-control-prev { left: 0; }
+  #recommended-item-carousel .carousel-control-next { right: 0; }
+  #recommended-item-carousel .carousel-control-prev:hover,
+  #recommended-item-carousel .carousel-control-next:hover {
+    background: var(--terra); border-color: var(--terra); color: var(--white);
+    transform: translateY(-50%);
+  }
+
+  .alert-info {
+    background: var(--terra-bg); border: 1px solid var(--terra-bd);
+    color: var(--terra-dk); border-radius: 0;
+    font-family: 'Raleway', sans-serif; font-size: .78rem; font-weight: 600;
+    letter-spacing: .12em; text-transform: uppercase; padding: 1.2rem 1.4rem;
+  }
+
+  @media (max-width: 768px) { .h-img-wrap::after { display: none; } }
+  @media (max-width: 576px) { .carousel-item .row { padding: 48px 0 72px; } #recommended-item-carousel { padding: 0 2.6rem; } }
+</style>
+
+
+<!-- ANNOUNCEMENT -->
+<div class="ann">
+  Free Delivery on Orders Above Rs.999 &nbsp;·&nbsp; New Arrivals Every Week &nbsp;·&nbsp; Up to 40% Off
+</div>
+
+<!-- ═════════ SLIDER ═════════ -->
+<section id="slider">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <div id="slider-carousel" class="carousel slide" data-ride="carousel" data-bs-ride="carousel">
+          <ol class="carousel-indicators">
+            {% for i in offer %}
+            <button type="button" data-bs-target="#slider-carousel"
+              data-bs-slide-to="{{forloop.counter0}}"
+              class="{% if forloop.first %}active{% endif %}"></button>
+            {% endfor %}
+          </ol>
+          <div class="carousel-inner">
+            {% for i in offer %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <div class="row">
+                <div class="col-sm-6 d-flex justify-content-center align-items-start flex-column">
+                  <div class="h-eyebrow">New Collection</div>
+                  <h1>
+                    <em>E-Shopper</em>
+                    Store
+                  </h1>
+                  <h2>{{i.title}}</h2>
+                  <p>{{i.desc|safe}}</p>
+                  <p>Price : Rs.{{i.price}}</p>
+                  <button type="button" class="btn get">
+                    Shop Now <span class="ic">→</span>
+                  </button>
+                </div>
+                <div class="col-sm-6 d-flex align-items-center justify-content-center">
+                  <div class="h-img-wrap">
+                    <img src="{{i.image.url}}" class="girl img-fluid" alt=""
+                      style="height:300px !important; width:400px !important;" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═════════ MAIN ═════════ -->
+<section class="main-section">
+  <div class="container">
+    <div class="row">
+
+      <!-- SIDEBAR -->
+      <div class="col-lg-3 col-md-4">
+        <aside class="sidebar shop-sidebar">
+
+          <div class="widget">
+            <h3 class="widget-title">Categories</h3>
+            <div class="accordion" id="categoriesAccordion">
+              {% for i in category %}
+              <div class="accordion-item border-0 mb-1">
+                <h4 class="accordion-header">
+                  <button class="accordion-button shadow-none" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#{{i.id}}" aria-expanded="false">
+                    {{i.title}}
+                    <span class="ms-auto badge bg-light text-dark">{{i.sub_count}}</span>
+                  </button>
+                </h4>
+                <div id="{{i.id}}" class="accordion-collapse collapse" data-bs-parent="#categoriesAccordion">
+                  <div class="accordion-body px-0 pt-1">
+                    <ul class="list-unstyled">
+                      {% for j in i.subcategory_set.all %}
+                      <li class="mb-1">
+                        <a href="?subcategory={{j.id}}#full" class="text-decoration-none">
+                          <i class="fas fa-angle-right me-2"></i>{{j.title}}
+                          <span class="ms-auto small">({{j.product_count}})</span>
+                        </a>
+                      </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <form method="GET" action="{% url 'index' %}#full">
+            <div class="widget">
+              <h3 class="widget-title">Filter by Price</h3>
+              <div class="price-slider mb-3">
+                <div id="priceSlider" class="noUi-target noUi-ltr noUi-horizontal"></div>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="form-floating" style="width:45%">
+                  <input type="number" name="min" class="form-control" id="minPrice" placeholder="Min" value="0">
+                  <label for="minPrice">Min</label>
+                </div>
+                <span style="font-size:.8rem; color:var(--soft)">to</span>
+                <div class="form-floating" style="width:45%">
+                  <input type="number" name="max" class="form-control" id="maxPrice" placeholder="Max" value="600">
+                  <input type="hidden" name="subcategory" value="{{request.GET.subcategory}}">
+                  <label for="maxPrice">Max</label>
+                </div>
+              </div>
+              <button class="btn btn-primary w-100">Filter</button>
+            </div>
+          </form>
+
+          <div class="widget">
+            <h3 class="widget-title">Popular Brands</h3>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="b1" checked>
+              <label class="form-check-label d-flex justify-content-between w-100" for="b1">
+                <span>Acne</span><span>(50)</span>
+              </label>
+            </div>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="b2" checked>
+              <label class="form-check-label d-flex justify-content-between w-100" for="b2">
+                <span>Grüne Erde</span><span>(56)</span>
+              </label>
+            </div>
+          </div>
+
+        </aside>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="col-sm-9 padding-right">
+
+        <div class="features_items" id="full">
+          <div class="sec-head">
+            <span class="ey">Created For You</span>
+            <h2 class="title">Featured Items</h2>
+          </div>
+          <div class="container-fluid bg-transparent my-4 p-3">
+            <div class="row row-cols-1 row-cols-xs-2 row-cols-sm-2 row-cols-lg-3 g-3">
+              {% for i in data %}
+              <div class="col hp">
+                <div class="card h-100">
+                  <div class="card-img-wrapper">
+                    <a target="_blank" href="">
+                      <img src="{{i.image.url}}" class="card-img-top" alt="{{i.name}}"/>
+                    </a>
+                    <div class="label-top"><a target="_blank" href="">{{i.name}}</a></div>
+                    <button class="wish-btn" type="button"><i class="far fa-heart"></i></button>
+                    <a href="{% url 'product_detail' i.id %}"><div class="card-ov"><span>Quick View</span></div></a>
+                  </div>
+                  <div class="card-body">
+                    <div class="clearfix mb-3">
+                      <span class="float-start badge bg-secondary rounded-pill">Rs.<del>{{i.mark_price}}</del></span>
+                      <span class="float-start badge rounded-pill bg-success ms-1">Rs.{{i.price}}</span>
+                      <span class="float-end"><a href="#" class="small text-uppercase aff-link">reviews</a></span>
+                    </div>
+                    <h5 class="card-title"><a target="_blank" href="#">{{i.desc|safe}}</a></h5>
+                    <div class="d-grid gap-2 my-4">
+                      <a href="{% url 'cart_add' i.id %}" class="btn btn-warning bold-btn">Add to Cart</a>
+                    </div>
+                    <div class="clearfix mb-1">
+                      <span class="float-start"><a href="#"><i class="fas fa-question-circle"></i></a></span>
+                      <span class="float-end"><i class="far fa-heart" style="cursor:pointer"></i></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% empty %}
+              <h3 class="alert alert-info">No products found</h3>
+              {% endfor %}
+            </div>
+            <nav aria-label="Page navigation">
+              <ul class="pagination d-flex">
+                {% if data.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{data.previous_page_number}}#full">Previous</a></li>
+                {% endif %}
+                {% for n in num %}
+                <li class="page-item">
+                  <a class="page-link {% if n == data.number %}bg-warning{% endif %}" href="?page={{n}}#full">{{n}}</a>
+                </li>
+                {% endfor %}
+                {% if data.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{data.next_page_number}}#">Next</a></li>
+                {% endif %}
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tab">
+          <div class="col-sm-12">
+            <ul class="nav nav-tabs">
+              <li class="nav-item"><a href="#tshirt"    class="nav-link active" data-bs-toggle="tab">T-Shirt</a></li>
+              <li class="nav-item"><a href="#blazers"   class="nav-link"        data-bs-toggle="tab">Blazers</a></li>
+              <li class="nav-item"><a href="#sunglass"  class="nav-link"        data-bs-toggle="tab">Sunglass</a></li>
+              <li class="nav-item"><a href="#kids"      class="nav-link"        data-bs-toggle="tab">Kids</a></li>
+              <li class="nav-item"><a href="#poloshirt" class="nav-link"        data-bs-toggle="tab">Polo shirt</a></li>
+            </ul>
+          </div>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="tshirt">
+              <div class="col-sm-3"><div class="product-image-wrapper"><div class="productinfo text-center"><img src=".{% static 'images/product-details/jacket.png' %}" alt="" class="img-fluid"/><h2>$56</h2><p>Easy Polo Black Edition</p><a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i> Add to cart</a></div></div></div>
+            </div>
+            <div class="tab-pane fade" id="blazers">
+              <div class="col-sm-3"><div class="product-image-wrapper"><div class="productinfo text-center"><img src=".{% static 'images/product-details/jacket.png' %}" alt="" class="img-fluid"/><h2>$56</h2><p>Easy Polo Black Edition</p><a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i> Add to cart</a></div></div></div>
+            </div>
+            <div class="tab-pane fade" id="sunglass">
+              <div class="col-sm-3"><div class="product-image-wrapper"><div class="productinfo text-center"><img src="{% static 'images/home/gallery3.jpg' %}" alt="" class="img-fluid"/><h2>$56</h2><p>Easy Polo Black Edition</p><a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i> Add to cart</a></div></div></div>
+              <div class="col-sm-3"><div class="product-image-wrapper"><div class="productinfo text-center"><img src="{% static 'images/home/gallery4.jpg' %}" alt="" class="img-fluid"/><h2>$56</h2><p>Easy Polo Black Edition</p><a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i> Add to cart</a></div></div></div>
+              <div class="col-sm-3"><div class="product-image-wrapper"><div class="productinfo text-center"><img src="{% static 'images/home/gallery1.jpg' %}" alt="" class="img-fluid"/><h2>$56</h2><p>Easy Polo Black Edition</p><a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i> Add to cart</a></div></div></div>
+              <div class="col-sm-3"><div class="product-image-wrapper"><div class="productinfo text-center"><img src="{% static 'images/home/gallery2.jpg' %}" alt="" class="img-fluid"/><h2>$56</h2><p>Easy Polo Black Edition</p><a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i> Add to cart</a></div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recommended Items -->
+        <div class="recommended_items">
+          <div class="sec-head">
+            <span class="ey">Hand Picked</span>
+            <h2 class="title">Recommended Items</h2>
+          </div>
+          <div id="recommended-item-carousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <div class="row">
+                  <div class="col-12 col-sm-6 col-md-4"><div class="product-image-wrapper"><div class="productinfo text-center"><img src=".{% static 'images/product-details/download_5.png' %}" alt="" class="img-fluid"/><h2>$56</h2><p>Easy Polo Black Edition</p><a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i> Add to cart</a></div></div></div>
+                  <div class="col-12 col-sm-6 col-md-4 d-none d-sm-block"><div class="product-image-wrapper"><div class="productinfo text-center"><img src=".{% static 'images/product-details/download_10.png' %}" alt="" class="img-fluid"/><h2>$56</h2><p>Easy Polo Black Edition</p><a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i> Add to cart</a></div></div></div>
+                  <div class="col-12 col-sm-6 col-md-4 d-none d-md-block"><div class="product-image-wrapper"><div class="productinfo text-center"><img src=".{% static 'images/product-details/download_8.png' %}" alt="" class="img-fluid"/><h2>$56</h2><p>Easy Polo Black Edition</p><a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i> Add to cart</a></div></div></div>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <div class="row">
+                  <div class="col-12 col-sm-6 col-md-4"><div class="product-image-wrapper"><div class="productinfo text-center"><img src=".{% static 'images/product-details/download_10.png' %}" alt="" class="img-fluid"/><h2>$56</h2><p>Easy Polo Black Edition</p><a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i> Add to cart</a></div></div></div>
+                  <div class="col-12 col-sm-6 col-md-4 d-none d-sm-block"><div class="product-image-wrapper"><div class="productinfo text-center"><img src=".{% static 'images/product-details/download_14.png' %}" alt="" class="img-fluid"/><h2>$56</h2><p>Easy Polo Black Edition</p><a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i> Add to cart</a></div></div></div>
+                  <div class="col-12 col-sm-6 col-md-4 d-none d-md-block"><div class="product-image-wrapper"><div class="productinfo text-center"><img src=".{% static 'images/product-details/jacket.png' %}" alt="" class="img-fluid"/><h2>$56</h2><p>Easy Polo Black Edition</p><a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i> Add to cart</a></div></div></div>
+                </div>
+              </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#recommended-item-carousel" data-bs-slide="prev">
+              <i class="fa fa-angle-left"></i><span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#recommended-item-carousel" data-bs-slide="next">
+              <i class="fa fa-angle-right"></i><span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /col-sm-9 -->
+    </div>
+  </div>
+</section>
+
+{% endblock content %}

@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --cream: #faf7f2;
+    --charcoal: #1c1c1e;
+    --warm-gray: #6b6560;
+    --gold: #c9a96e;
+    --gold-light: #e8d5b0;
+    --border: #e8e2d9;
+    --error: #b85c38;
+    --success: #4a7c59;
+    --radius: 3px;
+  }
+
+  .auth-wrapper {
+    min-height: calc(100vh - 130px);
+    background: var(--cream);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 1rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .auth-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 380px; height: 380px;
+    border: 1px solid rgba(201,169,110,0.1);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .auth-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 260px; height: 260px;
+    border: 1px solid rgba(201,169,110,0.08);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .auth-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 640px;
+    padding: 3rem 3rem 2.5rem;
+    position: relative;
+    box-shadow: 0 8px 48px rgba(28,28,30,0.07);
+    animation: slideUp 0.4s ease both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 2.5rem; right: 2.5rem;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  /* Header */
+  .auth-header { text-align: center; margin-bottom: 2.2rem; }
+
+  .auth-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 1.4rem;
+  }
+  .auth-logo span { color: var(--gold); font-style: italic; }
+
+  .auth-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.85rem;
+    font-weight: 300;
+    color: var(--charcoal);
+    margin-bottom: 0.4rem;
+  }
+  .auth-subtitle {
+    font-size: 0.8rem;
+    color: var(--warm-gray);
+    letter-spacing: 0.04em;
+  }
+
+  /* Section label */
+  .section-label {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 1.8rem 0 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Messages */
+  .messages-list { margin-bottom: 1.4rem; }
+
+  .msg-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    margin-bottom: 0.45rem;
+  }
+  .msg-error  { background:#fdf3ef; border:1px solid #f0c4b4; color:var(--error); }
+  .msg-success{ background:#eef5f1; border:1px solid #b8d9c5; color:var(--success); }
+  .msg-item i { margin-top:1px; font-size:0.75rem; flex-shrink:0; }
+
+  /* Form */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 540px) {
+    .form-row { grid-template-columns: 1fr; }
+    .auth-card { padding: 2.2rem 1.5rem 2rem; }
+  }
+
+  .form-group { margin-bottom: 1.1rem; }
+
+  .form-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+    margin-bottom: 0.4rem;
+    display: block;
+  }
+
+  .input-wrap { position: relative; }
+
+  .input-wrap .input-icon {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #c0b8b0;
+    font-size: 0.78rem;
+    pointer-events: none;
+    transition: color 0.2s;
+  }
+
+  .form-control {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.68rem 0.9rem 0.68rem 2.4rem;
+    font-size: 0.83rem;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--charcoal);
+    background: var(--cream);
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .form-control:focus {
+    border-color: var(--gold);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(201,169,110,0.1);
+  }
+
+  .input-wrap:focus-within .input-icon { color: var(--gold); }
+  .form-control::placeholder { color: #c8c0b8; }
+
+  /* Password toggle */
+  .toggle-pass {
+    position: absolute;
+    right: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #c0b8b0;
+    font-size: 0.78rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+  }
+  .toggle-pass:hover { color: var(--gold); }
+
+  /* Password strength */
+  .strength-bar {
+    display: flex;
+    gap: 4px;
+    margin-top: 0.5rem;
+  }
+  .strength-bar span {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    transition: background 0.3s ease;
+  }
+  .strength-bar span.weak   { background: #e07050; }
+  .strength-bar span.fair   { background: #e0a050; }
+  .strength-bar span.good   { background: var(--gold); }
+  .strength-bar span.strong { background: var(--success); }
+
+  .strength-hint {
+    font-size: 0.7rem;
+    color: var(--warm-gray);
+    margin-top: 0.3rem;
+  }
+
+  /* Password rules */
+  .pwd-rules {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem 1rem;
+    margin-top: 0.7rem;
+  }
+  .pwd-rule {
+    font-size: 0.72rem;
+    color: #c0b8b0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.2s;
+  }
+  .pwd-rule i { font-size: 0.65rem; }
+  .pwd-rule.met { color: var(--success); }
+
+  /* Submit */
+  .btn-auth {
+    width: 100%;
+    padding: 0.82rem 1rem;
+    background: var(--charcoal);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-top: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .btn-auth:hover { background: var(--gold); color: var(--charcoal); }
+
+  /* Footer */
+  .auth-footer-text {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--warm-gray);
+  }
+  .auth-footer-text a {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .auth-footer-text a:hover { color: var(--charcoal); }
+</style>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <div class="auth-header">
+      <a href="/" class="auth-logo"><span>E</span>-Shopper</a>
+      <h1 class="auth-title">Create an account</h1>
+      <p class="auth-subtitle">Join us — it only takes a minute</p>
+    </div>
+
+    <!-- Django messages -->
+    {% if messages %}
+    <div class="messages-list">
+      {% for message in messages %}
+      <div class="msg-item {% if message.tags == 'error' %}msg-error{% else %}msg-success{% endif %}">
+        <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'register' %}">
+      {% csrf_token %}
+
+      <!-- Personal info -->
+      <div class="section-label">Personal Information</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="fname">First Name</label>
+          <div class="input-wrap">
+            <input class="form-control" type="text" id="fname" name="fname"
+              placeholder="John" required>
+            <i class="fas fa-user input-icon"></i>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="lname">Last Name</label>
+          <div class="input-wrap">
+            <input class="form-control" type="text" id="lname" name="lname"
+              placeholder="Doe" required>
+            <i class="fas fa-user input-icon"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <div class="input-wrap">
+            <input class="form-control" type="email" id="email" name="email"
+              placeholder="john@example.com" required>
+            <i class="fas fa-envelope input-icon"></i>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone">Phone Number</label>
+          <div class="input-wrap">
+            <input class="form-control" type="tel" id="phone" name="phone"
+              placeholder="+977 98XXXXXXXX" required>
+            <i class="fas fa-phone input-icon"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account info -->
+      <div class="section-label">Account Details</div>
+
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <div class="input-wrap">
+          <input class="form-control" type="text" id="username" name="username"
+            placeholder="Choose a username" required autocomplete="username">
+          <i class="fas fa-at input-icon"></i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="streetadress">Street Address</label>
+        <div class="input-wrap">
+          <input class="form-control" type="text" id="streetadress" name="streetadress"
+            placeholder="123 Main Street">
+          <i class="fas fa-map-marker-alt input-icon"></i>
+        </div>
+      </div>
+
+      <!-- Password section -->
+      <div class="section-label">Security</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-wrap">
+            <input class="form-control" type="password" id="password" name="password"
+              placeholder="Create a password" required autocomplete="new-password"
+              oninput="checkStrength(this.value)">
+            <i class="fas fa-lock input-icon"></i>
+            <button class="toggle-pass" type="button" onclick="togglePass('password', this)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div class="strength-bar">
+            <span id="s1"></span><span id="s2"></span>
+            <span id="s3"></span><span id="s4"></span>
+          </div>
+          <div class="strength-hint" id="strengthHint"></div>
+          <div class="pwd-rules">
+            <div class="pwd-rule" id="rule-upper"><i class="fas fa-circle"></i> Uppercase letter</div>
+            <div class="pwd-rule" id="rule-digit"><i class="fas fa-circle"></i> Number</div>
+            <div class="pwd-rule" id="rule-special"><i class="fas fa-circle"></i> Special character</div>
+            <div class="pwd-rule" id="rule-length"><i class="fas fa-circle"></i> 8+ characters</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password1">Confirm Password</label>
+          <div class="input-wrap">
+            <input class="form-control" type="password" id="password1" name="password1"
+              placeholder="Repeat your password" required autocomplete="new-password"
+              oninput="checkMatch()">
+            <i class="fas fa-lock input-icon"></i>
+            <button class="toggle-pass" type="button" onclick="togglePass('password1', this)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div class="strength-hint" id="matchHint" style="margin-top:0.5rem;"></div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-auth">Create Account</button>
+    </form>
+
+    <p class="auth-footer-text">
+      Already have an account? <a href="{% url 'log_in' %}">Sign in</a>
+    </p>
+
+  </div>
+</div>
+
+<script>
+  function togglePass(fieldId, btn) {
+    const f = document.getElementById(fieldId);
+    const i = btn.querySelector('i');
+    if (f.type === 'password') {
+      f.type = 'text';
+      i.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+      f.type = 'password';
+      i.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+  }
+
+  function checkStrength(val) {
+    const bars   = [document.getElementById('s1'), document.getElementById('s2'),
+                    document.getElementById('s3'), document.getElementById('s4')];
+    const hint   = document.getElementById('strengthHint');
+    const levels = ['weak','fair','good','strong'];
+    const labels = ['Too weak', 'Could be stronger', 'Almost there', 'Strong password'];
+
+    const upper   = /[A-Z]/.test(val);
+    const digit   = /\d/.test(val);
+    const special = /\W/.test(val);
+    const length  = val.length >= 8;
+
+    // update rule indicators
+    toggle('rule-upper',   upper);
+    toggle('rule-digit',   digit);
+    toggle('rule-special', special);
+    toggle('rule-length',  length);
+
+    const score = [upper, digit, special, length].filter(Boolean).length;
+
+    bars.forEach((b, i) => {
+      b.className = '';
+      if (i < score) b.classList.add(levels[score - 1]);
+    });
+
+    hint.textContent = val.length ? labels[score - 1] || '' : '';
+    hint.style.color = score <= 1 ? '#e07050' : score === 2 ? '#e0a050' : score === 3 ? '#c9a96e' : '#4a7c59';
+  }
+
+  function toggle(id, met) {
+    const el = document.getElementById(id);
+    if (met) el.classList.add('met'); else el.classList.remove('met');
+  }
+
+  function checkMatch() {
+    const p1  = document.getElementById('password').value;
+    const p2  = document.getElementById('password1').value;
+    const hint = document.getElementById('matchHint');
+    if (!p2) { hint.textContent = ''; return; }
+    if (p1 === p2) {
+      hint.textContent = '✓ Passwords match';
+      hint.style.color = '#4a7c59';
+    } else {
+      hint.textContent = '✗ Passwords do not match';
+      hint.style.color = '#b85c38';
+    }
+  }
+</script>
+
+{% endblock content %}
